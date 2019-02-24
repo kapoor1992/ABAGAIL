@@ -1,0 +1,32 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - MammographyTest",
+            "request": "launch",
+            "mainClass": "opt.test.MammographyTest",
+            "projectName": "ABAGAIL"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - AbaloneTest",
+            "request": "launch",
+            "mainClass": "opt.test.AbaloneTest",
+            "projectName": "ABAGAIL"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - TwoColorsTest",
+            "request": "launch",
+            "mainClass": "opt.test.TwoColorsTest",
+            "projectName": "ABAGAIL"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - KnapsackTest",
+            "request": "launch",
+            "mainClass": "opt.test.KnapsackTest",
+            "projectName": "ABAGAIL"
+        }
+    ]
+}
