@@ -1,10 +1,6 @@
 package opt.test;
 
-import dist.*;
 import opt.*;
-import opt.prob.GenericProbabilisticOptimizationProblem;
-import opt.prob.MIMIC;
-import opt.prob.ProbabilisticOptimizationProblem;
 import opt.example.*;   
 import opt.ga.*;
 import shared.*;
@@ -14,18 +10,10 @@ import java.util.*;
 import java.io.*;
 import java.text.*;
 
-/**
- * Implementation of randomized hill climbing, simulated annealing, and genetic algorithm to
- * find optimal weights to a neural network that is classifying abalone as having either fewer 
- * or more than 15 rings. 
- *
- * @author Hannah Lau
- * @version 1.0
- */
 public class MammographyTest {
     private static Instance[] instances = initializeInstances();
 
-    private static int inputLayer = 15, hiddenLayer = 8, outputLayer = 1, trainingIterations = 10;
+    private static int inputLayer = 15, hiddenLayer = 8, outputLayer = 1, maxTrainingIterations = 500;
     private static BackPropagationNetworkFactory factory = new BackPropagationNetworkFactory();
     
     private static ErrorMeasure measure = new SumOfSquaresError();
@@ -42,52 +30,79 @@ public class MammographyTest {
     private static DecimalFormat df = new DecimalFormat("0.000");
 
     public static void main(String[] args) {
-        for(int i = 0; i < oa.length; i++) {
-            networks[i] = factory.createClassificationNetwork(
-                new int[] {inputLayer, hiddenLayer, outputLayer});
-            nnop[i] = new NeuralNetworkOptimizationProblem(set, networks[i], measure);
-        }
+        double rhc_score[] = new double[5];
+        double sa_score[] = new double[5];
+        double ga_score[] = new double[5];
 
-        oa[0] = new RandomizedHillClimbing(nnop[0]);
-        oa[1] = new SimulatedAnnealing(1E11, .95, nnop[1]);
-        oa[2] = new StandardGeneticAlgorithm(200, 100, 10, nnop[2]);
+        for (int repeats = 0; repeats < 10; repeats++) {
+            for(int trainingIterations = 100; trainingIterations <= maxTrainingIterations; trainingIterations += 100) {
+                for(int i = 0; i < oa.length; i++) {
+                    networks[i] = factory.createClassificationNetwork(
+                        new int[] {inputLayer, hiddenLayer, outputLayer});
+                    nnop[i] = new NeuralNetworkOptimizationProblem(set, networks[i], measure);
+                }
+        
+                oa[0] = new RandomizedHillClimbing(nnop[0]);
+                oa[1] = new SimulatedAnnealing(1E11, .95, nnop[1]);
+                oa[2] = new StandardGeneticAlgorithm(200, 100, 10, nnop[2]);
 
-        for(int i = 0; i < oa.length; i++) {
-            double start = System.nanoTime(), end, trainingTime, testingTime, correct = 0, incorrect = 0;
-            train(oa[i], networks[i], oaNames[i]); //trainer.train();
-            end = System.nanoTime();
-            trainingTime = end - start;
-            trainingTime /= Math.pow(10,9);
+                
 
-            Instance optimalInstance = oa[i].getOptimal();
-            networks[i].setWeights(optimalInstance.getData());
+                for(int i = 0; i < oa.length; i++) {
+                    double start = System.nanoTime(), end, trainingTime, testingTime, correct = 0, incorrect = 0;
+                    train(oa[i], networks[i], oaNames[i], trainingIterations); //trainer.train();
+                    end = System.nanoTime();
+                    trainingTime = end - start;
+                    trainingTime /= Math.pow(10,9);
 
-            double predicted, actual;
-            start = System.nanoTime();
-            for(int j = 0; j < instances.length; j++) {
-                networks[i].setInputValues(instances[j].getData());
-                networks[i].run();
+                    Instance optimalInstance = oa[i].getOptimal();
+                    networks[i].setWeights(optimalInstance.getData());
 
-                predicted = Double.parseDouble(instances[j].getLabel().toString());
-                actual = Double.parseDouble(networks[i].getOutputValues().toString());
+                    double predicted, actual;
+                    start = System.nanoTime();
+                    for(int j = 0; j < instances.length; j++) {
+                        networks[i].setInputValues(instances[j].getData());
+                        networks[i].run();
 
-                double trash = Math.abs(predicted - actual) < 0.5 ? correct++ : incorrect++;
+                        predicted = Double.parseDouble(instances[j].getLabel().toString());
+                        actual = Double.parseDouble(networks[i].getOutputValues().toString());
 
+                        double trash = Math.abs(predicted - actual) < 0.5 ? correct++ : incorrect++;
+
+                    }
+                    end = System.nanoTime();
+                    testingTime = end - start;
+                    testingTime /= Math.pow(10,9);
+
+                    double score = correct/(correct+incorrect)*100 / 100.0;
+
+                    if (oaNames[i].equals("RHC"))
+                        rhc_score[(trainingIterations / 100) - 1] += score;
+                    if (oaNames[i].equals("SA"))
+                        sa_score[(trainingIterations / 100) - 1] += score;
+                    if (oaNames[i].equals("GA"))
+                        ga_score[(trainingIterations / 100) - 1] += score;
+                }
             }
-            end = System.nanoTime();
-            testingTime = end - start;
-            testingTime /= Math.pow(10,9);
-
-            results +=  "\nResults for " + oaNames[i] + ": \nCorrectly classified " + correct + " instances." +
-                        "\nIncorrectly classified " + incorrect + " instances.\nPercent correctly classified: "
-                        + df.format(correct/(correct+incorrect)*100) + "%\nTraining time: " + df.format(trainingTime)
-                        + " seconds\nTesting time: " + df.format(testingTime) + " seconds\n";
         }
 
-        System.out.println(results);
+        for (int i = 0; i < 5; i++) {
+            rhc_score[i] /= 10;
+            ga_score[i] /= 10;
+            sa_score[i] /= 10;
+        }
+
+        System.out.println("iterations");
+        System.out.println("[100, 200, 300, 400, 500]");
+        System.out.println(oaNames[0]);
+        System.out.println(Arrays.toString(rhc_score));
+        System.out.println(oaNames[1]);
+        System.out.println(Arrays.toString(sa_score));
+        System.out.println(oaNames[2]);
+        System.out.println(Arrays.toString(ga_score));
     }
 
-    private static void train(OptimizationAlgorithm oa, BackPropagationNetwork network, String oaName) {
+    private static void train(OptimizationAlgorithm oa, BackPropagationNetwork network, String oaName, int trainingIterations) {
         //System.out.println("\nError results for " + oaName + "\n---------------------------");
 
         for(int i = 0; i < trainingIterations; i++) {
