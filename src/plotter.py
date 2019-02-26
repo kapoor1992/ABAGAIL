@@ -27,7 +27,7 @@ y_vals_sa = [2895.301876083266, 3369.3796622160385, 3350.588852710348, 3121.9202
 y_vals_ga = [3266.807045348459, 3678.733621872754, 3548.442739961316, 3390.367975730762, 3593.071905029364]
 y_vals_mm = [3548.843111592112, 3824.399821698222, 3668.5030717605187, 3499.101182260001, 3734.913967308523]
 
-plt.title('Knapsack Fitness')
+plt.title('Knapsack Problem Fitness')
 plt.xlabel('Iterations')
 plt.ylabel('Score')
 
@@ -59,5 +59,26 @@ plt.plot(x_vals, y_vals_mm, label='MIMIC')
 
 plt.xticks(np.arange(100, 501, 100))
 plt.yticks(np.arange(0, 0.21, 0.01))
+plt.legend()
+plt.show()
+
+#nqueens
+x_vals = [100, 200, 300, 400, 500]
+y_vals_rhc = [43.9, 44.1, 44.1, 43.9, 44.2]
+y_vals_sa = [44.3, 44.4, 44.3, 44.7, 44.7]
+y_vals_ga = [44.1, 44.0, 44.2, 44.2, 44.3]
+y_vals_mm = [42.2, 42.7, 42.7, 42.5, 42.8]
+
+plt.title('N-Queens Problem Fitness')
+plt.xlabel('Iterations')
+plt.ylabel('Score')
+
+plt.plot(x_vals, y_vals_rhc, label='Randomized Hill Climbing')
+plt.plot(x_vals, y_vals_sa, label='Simulated Annealing')
+plt.plot(x_vals, y_vals_ga, label='Genetic Algorithm')
+plt.plot(x_vals, y_vals_mm, label='MIMIC')
+
+plt.xticks(np.arange(100, 501, 100))
+plt.yticks(np.arange(40, 47, 0.5))
 plt.legend()
 plt.show()

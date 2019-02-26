@@ -2,6 +2,27 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - FlipFlopTest",
+            "request": "launch",
+            "mainClass": "opt.test.FlipFlopTest",
+            "projectName": "ABAGAIL"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - MaxKColoringTest",
+            "request": "launch",
+            "mainClass": "opt.test.MaxKColoringTest",
+            "projectName": "ABAGAIL"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - NQueensTest",
+            "request": "launch",
+            "mainClass": "opt.test.NQueensTest",
+            "projectName": "ABAGAIL"
+        },
+        {
+            "type": "java",
             "name": "CodeLens (Launch) - TravelingSalesmanTest",
             "request": "launch",
             "mainClass": "opt.test.TravelingSalesmanTest",
