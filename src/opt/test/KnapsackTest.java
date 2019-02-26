@@ -58,48 +58,77 @@ public class KnapsackTest {
      * @param args ignored
      */
     public static void main(String[] args) {
-        int[] copies = new int[NUM_ITEMS];
-        Arrays.fill(copies, COPIES_EACH);
-        double[] values = new double[NUM_ITEMS];
-        double[] weights = new double[NUM_ITEMS];
-        for (int i = 0; i < NUM_ITEMS; i++) {
-            values[i] = random.nextDouble() * MAX_VALUE;
-            weights[i] = random.nextDouble() * MAX_WEIGHT;
+        double rhc_score[] = new double[5];
+        double sa_score[] = new double[5];
+        double ga_score[] = new double[5];
+        double mm_score[] = new double[5];
+        int repeats = 10;
+        int iterations[] = {1000, 2000, 3000, 4000, 5000};
+
+        for (int r = 0; r < repeats; r++) {
+            for (int it = 0; it < 5; it++) {
+                int[] copies = new int[NUM_ITEMS];
+                Arrays.fill(copies, COPIES_EACH);
+                double[] values = new double[NUM_ITEMS];
+                double[] weights = new double[NUM_ITEMS];
+                for (int i = 0; i < NUM_ITEMS; i++) {
+                    values[i] = random.nextDouble() * MAX_VALUE;
+                    weights[i] = random.nextDouble() * MAX_WEIGHT;
+                }
+                int[] ranges = new int[NUM_ITEMS];
+                Arrays.fill(ranges, COPIES_EACH + 1);
+
+                EvaluationFunction ef = new KnapsackEvaluationFunction(values, weights, MAX_KNAPSACK_WEIGHT, copies);
+                Distribution odd = new DiscreteUniformDistribution(ranges);
+                NeighborFunction nf = new DiscreteChangeOneNeighbor(ranges);
+
+                MutationFunction mf = new DiscreteChangeOneMutation(ranges);
+                CrossoverFunction cf = new UniformCrossOver();
+                Distribution df = new DiscreteDependencyTree(.1, ranges);
+
+                HillClimbingProblem hcp = new GenericHillClimbingProblem(ef, odd, nf);
+                GeneticAlgorithmProblem gap = new GenericGeneticAlgorithmProblem(ef, odd, mf, cf);
+                ProbabilisticOptimizationProblem pop = new GenericProbabilisticOptimizationProblem(ef, odd, df);
+                
+                RandomizedHillClimbing rhc = new RandomizedHillClimbing(hcp);      
+                FixedIterationTrainer fit = new FixedIterationTrainer(rhc, iterations[it]);
+                fit.train();
+                rhc_score[it] += ef.value(rhc.getOptimal());
+                
+                SimulatedAnnealing sa = new SimulatedAnnealing(100, .95, hcp);
+                fit = new FixedIterationTrainer(sa, iterations[it]);
+                fit.train();
+                sa_score[it] += ef.value(sa.getOptimal());
+                
+                StandardGeneticAlgorithm ga = new StandardGeneticAlgorithm(200, 150, 25, gap);
+                fit = new FixedIterationTrainer(ga, iterations[it]);
+                fit.train();
+                ga_score[it] += ef.value(ga.getOptimal());
+                
+                MIMIC mimic = new MIMIC(200, 100, pop);
+                fit = new FixedIterationTrainer(mimic, iterations[it]);
+                fit.train();
+                mm_score[it] += ef.value(mimic.getOptimal());
+            }
         }
-        int[] ranges = new int[NUM_ITEMS];
-        Arrays.fill(ranges, COPIES_EACH + 1);
 
-        EvaluationFunction ef = new KnapsackEvaluationFunction(values, weights, MAX_KNAPSACK_WEIGHT, copies);
-        Distribution odd = new DiscreteUniformDistribution(ranges);
-        NeighborFunction nf = new DiscreteChangeOneNeighbor(ranges);
+        for (int i = 0; i < 5; i++) {
+            rhc_score[i] /= 10;
+            ga_score[i] /= 10;
+            sa_score[i] /= 10;
+            mm_score[i] /= 10;
+        }
 
-        MutationFunction mf = new DiscreteChangeOneMutation(ranges);
-        CrossoverFunction cf = new UniformCrossOver();
-        Distribution df = new DiscreteDependencyTree(.1, ranges);
-
-        HillClimbingProblem hcp = new GenericHillClimbingProblem(ef, odd, nf);
-        GeneticAlgorithmProblem gap = new GenericGeneticAlgorithmProblem(ef, odd, mf, cf);
-        ProbabilisticOptimizationProblem pop = new GenericProbabilisticOptimizationProblem(ef, odd, df);
-        
-        RandomizedHillClimbing rhc = new RandomizedHillClimbing(hcp);      
-        FixedIterationTrainer fit = new FixedIterationTrainer(rhc, 200000);
-        fit.train();
-        System.out.println(ef.value(rhc.getOptimal()));
-        
-        SimulatedAnnealing sa = new SimulatedAnnealing(100, .95, hcp);
-        fit = new FixedIterationTrainer(sa, 200000);
-        fit.train();
-        System.out.println(ef.value(sa.getOptimal()));
-        
-        StandardGeneticAlgorithm ga = new StandardGeneticAlgorithm(200, 150, 25, gap);
-        fit = new FixedIterationTrainer(ga, 1000);
-        fit.train();
-        System.out.println(ef.value(ga.getOptimal()));
-        
-        MIMIC mimic = new MIMIC(200, 100, pop);
-        fit = new FixedIterationTrainer(mimic, 1000);
-        fit.train();
-        System.out.println(ef.value(mimic.getOptimal()));
+        System.out.println("iterations");
+        System.out.println("[1000, 2000, 3000, 4000, 5000]");
+        System.out.println("rhc");
+        System.out.println(Arrays.toString(rhc_score));
+        System.out.println("sa");
+        System.out.println(Arrays.toString(sa_score));
+        System.out.println("ga");
+        System.out.println(Arrays.toString(ga_score));
+        System.out.println("mm");
+        System.out.println(Arrays.toString(mm_score));
     }
 
 }
