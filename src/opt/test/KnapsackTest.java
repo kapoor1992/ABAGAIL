@@ -63,7 +63,7 @@ public class KnapsackTest {
         double ga_score[] = new double[5];
         double mm_score[] = new double[5];
         int repeats = 10;
-        int iterations[] = {1000, 2000, 3000, 4000, 5000};
+        int iterations[] = {100, 200, 300, 400, 500};
 
         for (int r = 0; r < repeats; r++) {
             for (int it = 0; it < 5; it++) {
@@ -120,7 +120,7 @@ public class KnapsackTest {
         }
 
         System.out.println("iterations");
-        System.out.println("[1000, 2000, 3000, 4000, 5000]");
+        System.out.println("[100, 200, 300, 400, 500]");
         System.out.println("rhc");
         System.out.println(Arrays.toString(rhc_score));
         System.out.println("sa");

@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - TravelingSalesmanTest",
+            "request": "launch",
+            "mainClass": "opt.test.TravelingSalesmanTest",
+            "projectName": "ABAGAIL"
+        },
+        {
+            "type": "java",
             "name": "CodeLens (Launch) - MammographyTest",
             "request": "launch",
             "mainClass": "opt.test.MammographyTest",
