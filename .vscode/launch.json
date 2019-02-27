@@ -2,6 +2,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - ContinuousPeaksTest",
+            "request": "launch",
+            "mainClass": "opt.test.ContinuousPeaksTest",
+            "projectName": "ABAGAIL"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - FourPeaksTest",
+            "request": "launch",
+            "mainClass": "opt.test.FourPeaksTest",
+            "projectName": "ABAGAIL"
+        },
+        {
+            "type": "java",
             "name": "CodeLens (Launch) - FlipFlopTest",
             "request": "launch",
             "mainClass": "opt.test.FlipFlopTest",

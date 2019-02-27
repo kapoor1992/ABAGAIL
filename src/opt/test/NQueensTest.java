@@ -69,7 +69,7 @@ public class NQueensTest {
                 long starttime = System.currentTimeMillis();
                 rhc_score[it] += ef.value(rhc.getOptimal());
                 
-                SimulatedAnnealing sa = new SimulatedAnnealing(1E1, .1, hcp);
+                SimulatedAnnealing sa = new SimulatedAnnealing(1E11, .95, hcp);
                 fit = new FixedIterationTrainer(sa, iterations[it]);
                 fit.train();
                 
@@ -91,9 +91,13 @@ public class NQueensTest {
         }
 
         for (int i = 0; i < 5; i++) {
+            rhc_score[i] = 1 / rhc_score[i];
             rhc_score[i] /= 10;
+            ga_score[i] = 1 / ga_score[i];
             ga_score[i] /= 10;
+            sa_score[i] = 1 / sa_score[i];
             sa_score[i] /= 10;
+            mm_score[i] = 1 / mm_score[i];
             mm_score[i] /= 10;
         }
 
