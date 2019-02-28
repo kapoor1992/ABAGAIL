@@ -69,7 +69,7 @@ public class NQueensTest {
                 long starttime = System.currentTimeMillis();
                 rhc_score[it] += ef.value(rhc.getOptimal());
                 
-                SimulatedAnnealing sa = new SimulatedAnnealing(1E11, .95, hcp);
+                SimulatedAnnealing sa = new SimulatedAnnealing(1E12, .95, hcp);
                 fit = new FixedIterationTrainer(sa, iterations[it]);
                 fit.train();
                 
@@ -77,13 +77,13 @@ public class NQueensTest {
                 sa_score[it] += ef.value(sa.getOptimal());
                 
                 starttime = System.currentTimeMillis();
-                StandardGeneticAlgorithm ga = new StandardGeneticAlgorithm(200, 0, 10, gap);
+                StandardGeneticAlgorithm ga = new StandardGeneticAlgorithm(200, 150, 20, gap);
                 fit = new FixedIterationTrainer(ga, iterations[it]);
                 fit.train();
                 ga_score[it] += ef.value(ga.getOptimal());
                 
                 starttime = System.currentTimeMillis();
-                MIMIC mimic = new MIMIC(200, 10, pop);
+                MIMIC mimic = new MIMIC(200, 100, pop);
                 fit = new FixedIterationTrainer(mimic, iterations[it]);
                 fit.train();
                 mm_score[it] += ef.value(mimic.getOptimal());

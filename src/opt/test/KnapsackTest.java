@@ -95,12 +95,12 @@ public class KnapsackTest {
                 fit.train();
                 rhc_score[it] += ef.value(rhc.getOptimal());
                 
-                SimulatedAnnealing sa = new SimulatedAnnealing(100, .95, hcp);
+                SimulatedAnnealing sa = new SimulatedAnnealing(1E12, .95, hcp);
                 fit = new FixedIterationTrainer(sa, iterations[it]);
                 fit.train();
                 sa_score[it] += ef.value(sa.getOptimal());
                 
-                StandardGeneticAlgorithm ga = new StandardGeneticAlgorithm(200, 150, 25, gap);
+                StandardGeneticAlgorithm ga = new StandardGeneticAlgorithm(200, 150, 20, gap);
                 fit = new FixedIterationTrainer(ga, iterations[it]);
                 fit.train();
                 ga_score[it] += ef.value(ga.getOptimal());
