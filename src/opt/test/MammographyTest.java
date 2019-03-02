@@ -30,6 +30,92 @@ public class MammographyTest {
     private static DecimalFormat df = new DecimalFormat("0.000");
 
     public static void main(String[] args) {
+        run_small_iter();
+        run_large_iter();
+    }
+
+    public static void run_small_iter() {
+        double rhc_score[] = new double[4];
+        double sa_score[] = new double[4];
+        double ga_score[] = new double[4];
+
+        for (int repeats = 0; repeats < 10; repeats++) {
+            int[] trainingIterationsList = new int[] {1, 5, 10, 15};
+
+            for(int trainingIterations : trainingIterationsList) {
+                int ii = 0;
+
+                if (trainingIterations > 1)
+                    ii = trainingIterations / 5;
+
+                for(int i = 0; i < oa.length; i++) {
+                    networks[i] = factory.createClassificationNetwork(
+                        new int[] {inputLayer, hiddenLayer, outputLayer});
+                    nnop[i] = new NeuralNetworkOptimizationProblem(set, networks[i], measure);
+                }
+        
+                oa[0] = new RandomizedHillClimbing(nnop[0]);
+                oa[1] = new SimulatedAnnealing(1E11, .95, nnop[1]);
+                oa[2] = new StandardGeneticAlgorithm(200, 100, 10, nnop[2]);
+
+                
+
+                for(int i = 0; i < oa.length; i++) {
+                    double start = System.nanoTime(), end, trainingTime, testingTime, correct = 0, incorrect = 0;
+                    train(oa[i], networks[i], oaNames[i], trainingIterations); //trainer.train();
+                    end = System.nanoTime();
+                    trainingTime = end - start;
+                    trainingTime /= Math.pow(10,9);
+
+                    Instance optimalInstance = oa[i].getOptimal();
+                    networks[i].setWeights(optimalInstance.getData());
+
+                    double predicted, actual;
+                    start = System.nanoTime();
+                    for(int j = 0; j < instances.length; j++) {
+                        networks[i].setInputValues(instances[j].getData());
+                        networks[i].run();
+
+                        predicted = Double.parseDouble(instances[j].getLabel().toString());
+                        actual = Double.parseDouble(networks[i].getOutputValues().toString());
+
+                        double trash = Math.abs(predicted - actual) < 0.5 ? correct++ : incorrect++;
+
+                    }
+                    end = System.nanoTime();
+                    testingTime = end - start;
+                    testingTime /= Math.pow(10,9);
+
+                    double score = correct/(correct+incorrect)*100 / 100.0;
+
+                    if (oaNames[i].equals("RHC"))
+                        rhc_score[ii] += score;
+                    if (oaNames[i].equals("SA"))
+                        sa_score[ii] += score;
+                    if (oaNames[i].equals("GA"))
+                        ga_score[ii] += score;
+                    
+                }
+            }
+        }
+
+        for (int i = 0; i < 4; i++) {
+            rhc_score[i] /= 10;
+            ga_score[i] /= 10;
+            sa_score[i] /= 10;
+        }
+
+        System.out.println("iterations");
+        System.out.println("[1, 5, 10, 15]");
+        System.out.println(oaNames[0]);
+        System.out.println(Arrays.toString(rhc_score));
+        System.out.println(oaNames[1]);
+        System.out.println(Arrays.toString(sa_score));
+        System.out.println(oaNames[2]);
+        System.out.println(Arrays.toString(ga_score));
+    }
+
+    public static void run_large_iter() {
         double rhc_score[] = new double[5];
         double sa_score[] = new double[5];
         double ga_score[] = new double[5];

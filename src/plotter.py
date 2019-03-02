@@ -1,7 +1,62 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-# neural net
+# neural net old
+x_vals = [1, 5, 10, 15]
+y_vals_02 = [0.439759036,
+0.451807229,
+0.487951807,
+0.506024096]
+y_vals_04 = [0.34939759,
+0.478915663,
+0.503012048,
+0.503012048]
+y_vals_06 = [0.33935743,
+0.493975904,
+0.497991968,
+0.670682731]
+y_vals_08 = [
+    0.414156627,
+0.353915663,
+0.623493976,
+0.676204819
+]
+
+plt.title('Mammography Neural Network Backpropagation')
+plt.xlabel('Iterations')
+plt.ylabel('Score')
+
+plt.plot(x_vals, y_vals_02, label='20% Training Samples')
+plt.plot(x_vals, y_vals_04, label='40% Training Samples')
+plt.plot(x_vals, y_vals_06, label='60% Training Samples')
+plt.plot(x_vals, y_vals_08, label='80% Training Samples')
+
+plt.xticks(np.arange(0, 16, 5))
+plt.yticks(np.arange(0, 1.1, 0.1))
+plt.legend()
+plt.show()
+
+# neural net small iter
+x_vals = [1, 5, 10, 15]
+y_vals_rhc = [0.5060240963855422, 0.5021686746987952, 0.5057831325301205, 0.5085542168674699]
+y_vals_sa = [0.49807228915662644, 0.4928915662650602, 0.5080722891566265, 0.49012048192771074]
+y_vals_ga = [0.6374698795180722, 0.6318072289156625, 0.6234939759036144, 0.6362650602409639]
+
+plt.title('Mammography Neural Network Weight Training')
+plt.xlabel('Iterations')
+plt.ylabel('Score')
+
+plt.plot(x_vals, y_vals_rhc, label='Randomized Hill Climbing')
+plt.plot(x_vals, y_vals_sa, label='Simulated Annealing')
+plt.plot(x_vals, y_vals_ga, label='Genetic Algorithm')
+
+plt.xticks(np.arange(0, 16, 5))
+plt.yticks(np.arange(0, 1.1, 0.1))
+plt.legend()
+plt.show()
+
+
+# neural net big iter
 x_vals = [100, 200, 300, 400, 500]
 y_vals_rhc = [0.5263855421686747, 0.6080722891566265, 0.6767469879518073, 0.6584337349397591, 0.7126506024096386]
 y_vals_sa = [0.5131325301204819, 0.4932530120481927, 0.509277108433735, 0.5199999999999999, 0.49710843373493974]
